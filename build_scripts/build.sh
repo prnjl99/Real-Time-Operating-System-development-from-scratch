@@ -22,18 +22,23 @@ fi
 
 if [[ $1 == build ]];then
     make --no-print-directory -C $ROOT_FOLDER/build_scripts APP=$2 ROOT_FOLDER=$ROOT_FOLDER CI=$CI all
+elif [[ $1 == erase ]];then
+    make --no-print-directory -C $ROOT_FOLDER/build_scripts APP=$2 ROOT_FOLDER=$ROOT_FOLDER CI=$CI erase
+elif [[ $1 == flash ]];then
+    make --no-print-directory -C $ROOT_FOLDER/build_scripts APP=$2 ROOT_FOLDER=$ROOT_FOLDER CI=$CI flash
 elif [[ $1 == debug ]];then
-	if [[ ! -f $ROOT_FOLDER/test_applications/build/$2/$2.elf ]]; then
+	if [[ ! -f $ROOT_FOLDER/test_applications/build/$build_dir/$2/$2.elf ]]; then
 		make --no-print-directory -C $ROOT_FOLDER/build_scripts APP=$2 ROOT_FOLDER=$ROOT_FOLDER CI=$CI all
 	fi
-	openocd -s scripts -f $ROOT_FOLDER/build_scripts/tiva_programming_support/board/ti_ek-tm4c123gxl.cfg -c "init; reset init" &
+	openocd -s scripts -f $ROOT_FOLDER/build_scripts/stm_programming_support/stm.cfg -c "init; reset init" &
     sleep 1
     arm-none-eabi-gdb -ex "target extended-remote :3333" \
     -ex "monitor reset init" \
     -ex "set confirm off" \
-    -ex "file $ROOT_FOLDER/test_applications/build/$2/$2.elf" \
+    -ex "file $ROOT_FOLDER/test_applications/build/$build_dir/$2/$2.elf" \
     -ex "load"
 #    -ex "source -v $ROOT_FOLDER/build_scripts/gdb_cmd"
 elif [[ $1 == disass ]];then
+	get_dep
     make --no-print-directory -C $ROOT_FOLDER/build_scripts APP=$2 ROOT_FOLDER=$ROOT_FOLDER CI=$CI FUNC=$3 disass
 fi

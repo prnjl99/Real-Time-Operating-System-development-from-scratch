@@ -1,1 +1,1 @@
-include tiva_programming_support/tiva_make.mk
+	include stm_programming_support/stm_make.mk

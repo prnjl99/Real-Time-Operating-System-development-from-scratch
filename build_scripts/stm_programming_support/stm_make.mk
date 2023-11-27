@@ -5,12 +5,15 @@ else
     CC:=arm-none-eabi-gcc
     AS:=arm-none-eabi-as
     AR:=arm-none-eabi-ar
+    DISASS:=arm-none-eabi-objdump
     OBJCOPY:=arm-none-eabi-objcopy
     GDB:=arm-none-eabi-gdb
     READELF:=arm-none-eabi-readelf
+	# nm also can be used to analyze object files and final executable file ( because both are in ELF format )
+	# Linux uses ELF format, whereas Windows uses COFF format
 endif
 
-include tiva_programming_support/scratch.mk
+include stm_programming_support/stm_driver.mk
 
 OBJS=$(SRCS:.c=.o) $(ASSM:.s=.o)
 
@@ -27,10 +30,20 @@ MV_FILES_BUILD:
 
 .PHONY: depend clean all
 
-all:	MAINFUNC GENBIN MV_FILES_BUILD
+all:	MAINFUNC GENDISASS GENDISASS_M MV_FILES_BUILD
 		$(info ######################################################)
 		$(info $(APP) built successfully)
 		$(info ######################################################)
+
+flash:	all
+		openocd -f stm.cfg -c "init; reset halt; stm32l4x mass_erase 0; exit"
+		openocd -f stm.cfg -c "program $(APPDIR)/$(APP).bin reset exit 0x08000000"
+
+debug:	all
+		openocd -f stm.cfg -c "init; reset init"
+
+erase:
+		openocd -f stm.cfg -c "init; reset halt; stm32l4x mass_erase 0; exit"
 
 # For debugging with GDB:
 # 		openocd -f stm.cfg -c "init; reset init"
@@ -58,11 +71,24 @@ GENELF:
 		$(LD) $(LFLAGS) $(OBJS) -o $(APPDIR)/$(APP).elf
 		$(READELF) -Sl $(APPDIR)/$(APP).elf > $(APPDIR)/$(APP).readelf
 
-GENBIN:GENELF
+GENIM:GENELF
 		$(info ######################################################)
-		$(info generating bin file)
+		$(info generating bin and hex images)
 		$(info ######################################################)
 		$(OBJCOPY) -O binary $(APPDIR)/$(APP).elf $(APPDIR)/$(APP).bin
+		$(OBJCOPY) -O ihex $(APPDIR)/$(APP).elf $(APPDIR)/$(APP).hex
+
+GENDISASS:GENIM
+		$(info ######################################################)
+		$(info generating disassembly file)
+		$(info ######################################################)
+		$(DISASS) -D $(APPDIR)/$(APP).elf > $(APPDIR)/$(APP).s
+
+GENDISASS_M:
+		$(info ######################################################)
+		$(info generating disassembly of main.c file)
+		$(info ######################################################)
+		$(CC) -S $(CFLAGS) $(INCLUDES) $(ROOT_FOLDER)/test_applications/scratch/stm/$(APP)/main.c -o $(APPDIR)/main.s
 
 depend: $(SRCS)
 		makedepend $(INCLUDES) $^
