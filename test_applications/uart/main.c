@@ -55,6 +55,7 @@ void SystemClock_Config(void);
 void SysTick_Handler(void)
 {
 	__asm volatile ("BKPT #1");
+	//HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5); // Toggle The Output (LED) Pin
 }
 /* USER CODE END PFP */
 
@@ -76,7 +77,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+  //HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -90,16 +91,23 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  //MX_GPIO_Init();
+  //HAL_GPIO_Init();
   //MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   /* Initialize Virtual COM Port */
   //BSP_COM_Init(COM1);
 
-    if (HAL_SYSTICK_Config(SystemCoreClock / (1000U ) == 0U))
+	/* SystemCoreClock is 4000000 and we want tick to happen after each 1s, so devide
+	by 1. More details at HAL_InitTick() "stm_files\driver\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal.c" */
+    if (SysTick_Config(SystemCoreClock/1U) == 0U)
     {
-        HAL_NVIC_SetPriority(SysTick_IRQn, 0U, 0U);
+       	//HAL_NVIC_SetPriority(SysTick_IRQn, 0U, 0U);
+		
+		NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0U, 0U));
     }
+	//HAL_InitTick(TICK_INT_PRIORITY);
+    //HAL_MspInit();
+	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 
 	__enable_irq();
 	
