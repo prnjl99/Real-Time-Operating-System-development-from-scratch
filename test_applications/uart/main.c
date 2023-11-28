@@ -52,7 +52,10 @@ void SystemClock_Config(void);
 //static void MX_GPIO_Init(void);
 //static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
-
+void SysTick_Handler(void)
+{
+	__asm volatile ("BKPT #1");
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -73,7 +76,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  //HAL_Init();
+  HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -91,8 +94,15 @@ int main(void)
   //MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   /* Initialize Virtual COM Port */
-  BSP_COM_Init(COM1);
+  //BSP_COM_Init(COM1);
 
+    if (HAL_SYSTICK_Config(SystemCoreClock / (1000U ) == 0U))
+    {
+        HAL_NVIC_SetPriority(SysTick_IRQn, 0U, 0U);
+    }
+
+	__enable_irq();
+	
   //status = VD6283A1_LIGHT_SENSOR_Init(LIGHT_SENSOR_INSTANCE_0);
   //static unsigned short pra_pin_state = 0;
 

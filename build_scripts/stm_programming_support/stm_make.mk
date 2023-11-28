@@ -88,7 +88,7 @@ GENDISASS_M:
 		$(info ######################################################)
 		$(info generating disassembly of main.c file)
 		$(info ######################################################)
-		$(CC) -S $(CFLAGS) $(INCLUDES) $(ROOT_FOLDER)/test_applications/scratch/stm/$(APP)/main.c -o $(APPDIR)/main.s
+		$(CC) -S $(CFLAGS) $(INCLUDES) $(ROOT_FOLDER)/test_applications/$(APP)/main.c -o $(APPDIR)/main.s
 
 depend: $(SRCS)
 		makedepend $(INCLUDES) $^
