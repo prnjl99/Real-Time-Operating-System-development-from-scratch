@@ -13,7 +13,7 @@ else
 	# Linux uses ELF format, whereas Windows uses COFF format
 endif
 
-include stm_programming_support/stm_driver.mk
+include stm_programming_support/scratch.mk
 
 OBJS=$(SRCS:.c=.o) $(ASSM:.s=.o)
 
