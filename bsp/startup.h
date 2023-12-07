@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include "systick.h"
 
+#ifndef STARTUP_H
+#define STARTUP_H
+
 #define STACK_START 0x20018000U
 
 extern uint32_t _etext;
@@ -16,3 +19,5 @@ extern uint32_t _size_relocate_intr;
 
 int main(void);
 void default_handler(void);
+
+#endif /* STARTUP_H */

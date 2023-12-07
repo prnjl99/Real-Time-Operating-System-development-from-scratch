@@ -1,4 +1,3 @@
-#include "common.h"
 #include "systick.h"
 
 // t: expiration time, prd: period, now: current time. Return true if expired
