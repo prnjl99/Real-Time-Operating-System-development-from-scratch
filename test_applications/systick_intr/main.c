@@ -41,7 +41,7 @@ int main(void)
 	/* argument is SystemCoreClock/(1/time)), eg. for 1ms (4000000/(1/0.001)) */
 	SysTick_Config_local(4000000U/(1U));
 
-	(*((uint32_t*)0x40021000+25)) = 0x1;
+	(*((uint32_t*)0x40021000+60)) = 0x1;
 
 	//__asm volatile ("cpsie i" : : : "memory");
 

@@ -1,8 +1,5 @@
 #include <stdint.h>
 #include "startup.h"
-#include "startup.h"
-#include "common.h"
-#include "gpio.h"
 
 #ifdef CI_ENABLED
     void (*vector[])(void) __attribute__ ((section (".isr_vector"))) = {
@@ -11,12 +8,7 @@
     };
 #else
     void reset_handler(void) __attribute__ ((weak, alias("default_reset_handler")));
-void SysTick_Handler(void)
-{
-	invert_LED();
-    s_ticks++;
-};
-    //void SysTick_Handler(void) __attribute__ ((weak, alias("default_SysTick_Handler")));
+    void SysTick_Handler(void) __attribute__ ((weak, alias("default_SysTick_Handler")));
     void (*vector[])(void) __attribute__ ((section (".isr_vector"))) = {
         (void (*)(void))STACK_START,
         (void (*)(void))(&reset_handler),
@@ -45,7 +37,6 @@ void default_handler(void){
 
 void default_reset_handler(void)
 {
-    __asm volatile ("ldr   sp, =_estack");
     uint32_t size = (uint32_t)&_edata - (uint32_t)&_sdata;
     uint32_t *pDst = (uint32_t*)&_sdata;
     uint32_t *pSrc = (uint32_t*)&_sldata;
@@ -68,6 +59,5 @@ void default_reset_handler(void)
 
 void default_SysTick_Handler(void)
 {
-	__asm volatile ("BKPT #1");
     s_ticks++;
 }
