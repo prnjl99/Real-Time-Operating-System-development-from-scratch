@@ -1,19 +1,9 @@
 #include <stdint.h>
 #include <stdbool.h>
-#include "common.h"
+#include "common_driv.h"
 
 #ifndef SYSTICK_H
 #define SYSTICK_H
-
-typedef struct
-{
-  __IOM uint32_t CTRL;
-  __IOM uint32_t LOAD;
-  __IOM uint32_t VAL;
-  __IM  uint32_t CALIB;
-} SysTick_Type;
-
-#define SYSTICK ((SysTick_Type*) 0xe000e010UL)
 
 extern volatile uint32_t s_ticks;
 

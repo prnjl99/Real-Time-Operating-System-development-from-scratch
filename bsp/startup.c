@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include "startup.h"
 
+volatile uint32_t s_ticks=0;
+	
 #ifdef CI_ENABLED
     void (*vector[])(void) __attribute__ ((section (".isr_vector"))) = {
         (void (*)(void))STACK_START,
@@ -28,8 +30,6 @@
 		(void (*)(void))(&SysTick_Handler)
     };
 #endif
-
-volatile uint32_t s_ticks;
 
 void default_handler(void){
     while(1){};

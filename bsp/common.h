@@ -1,7 +1,3 @@
-#include <stdint.h>
-#include "main.h"
-
-
 #ifndef COMMON_H
 #define COMMON_H
 
@@ -14,6 +10,13 @@
 #define RCC                   ((RCC_TypeDef *) RCC_BASE)
 #define RCC_AHB2ENR_GPIOAEN   1UL
 
+#define SYSTICK ((SysTick_Type*) 0xe000e010UL)
+
+#define GPIOA_BASE            (AHB2PERIPH_BASE + 0x0000UL)
+#define GPIOA                 ((GPIO_TypeDef *) GPIOA_BASE)
+#define GPIO_BSRR_BS5         (0x1UL << 5U)
+#define GPIO_BRR_BR5          (0x1UL << 5U)
+
 #define     __I     volatile const
 #define     __O     volatile
 #define     __IO    volatile
@@ -22,6 +25,28 @@
 #define     __IOM    volatile
 
 #define BIT_POS(x) (1UL << (x))
+
+typedef struct
+{
+  volatile uint32_t MODER;
+  volatile uint32_t OTYPER;
+  volatile uint32_t OSPEEDR;
+  volatile uint32_t PUPDR;
+  volatile uint32_t IDR;
+  volatile uint32_t ODR;
+  volatile uint32_t BSRR;
+  volatile uint32_t LCKR;
+  volatile uint32_t AFR[2];
+  volatile uint32_t BRR;
+} GPIO_TypeDef;
+
+typedef struct
+{
+  __IOM uint32_t CTRL;
+  __IOM uint32_t LOAD;
+  __IOM uint32_t VAL;
+  __IM  uint32_t CALIB;
+} SysTick_Type;
 
 typedef struct
 {
@@ -64,10 +89,5 @@ typedef struct
   __IO uint32_t BDCR;
   __IO uint32_t CSR;
 } RCC_TypeDef;
-
-void _close(void);
-void _lseek(void); 
-void _read(void);
-void _write(void);
 
 #endif /* COMMON_H */
