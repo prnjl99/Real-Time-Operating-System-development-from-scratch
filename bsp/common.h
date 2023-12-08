@@ -9,13 +9,21 @@
 #define RCC_BASE              (AHB1PERIPH_BASE + 0x1000UL)
 #define RCC                   ((RCC_TypeDef *) RCC_BASE)
 #define RCC_AHB2ENR_GPIOAEN   1UL
+#define RCC_AHB2ENR_GPIOBEN   2UL
 
 #define SYSTICK ((SysTick_Type*) 0xe000e010UL)
 
 #define GPIOA_BASE            (AHB2PERIPH_BASE + 0x0000UL)
 #define GPIOA                 ((GPIO_TypeDef *) GPIOA_BASE)
-#define GPIO_BSRR_BS5         (0x1UL << 5U)
-#define GPIO_BRR_BR5          (0x1UL << 5U)
+
+#define GPIOB_BASE            (AHB2PERIPH_BASE + 0x0400UL)
+#define GPIOB                 ((GPIO_TypeDef *) GPIOB_BASE)
+
+#define GPIO_BSRR_BS5(pin_num)(0x1UL << (pin_num))
+#define GPIO_BRR_BR5(pin_num) (0x1UL << (pin_num))
+
+#define GPIO_MODER_MODE0      3UL
+#define GPIO_MODE             1UL
 
 #define     __I     volatile const
 #define     __O     volatile

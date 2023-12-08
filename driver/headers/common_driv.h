@@ -9,4 +9,5 @@ void _lseek(void);
 void _read(void);
 void _write(void);
 
+void bsp_init(void);
 #endif /* COMMON_DRIV_H */

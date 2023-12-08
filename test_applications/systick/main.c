@@ -9,6 +9,14 @@
 
 int main(void)
 {
+	bsp_init();
+
+	/* Initialize PA_5 (LED), PB_13, PB_14, PB_15 */
+	init_GPIO(GPIOA, 5UL);
+	init_GPIO(GPIOB, 13UL);
+	init_GPIO(GPIOB, 14UL);
+	init_GPIO(GPIOB, 15UL);
+
 	/* Generate interrupt after each 4 sec */
 	/* ?Multiply by 50 */
     systick_init(4*50*ONE_SECOND);
@@ -17,7 +25,7 @@ int main(void)
         if (s_ticks==1)
         {
         	//__asm volatile ("BKPT #0");
-            invert_LED();
+            invert_LED(GPIOA, 5UL);
 			s_ticks=0;
         }
     }
