@@ -1,13 +1,13 @@
 #include "gpio.h"
 
-void toggle_LED(void)
+void init_GPIO(GPIO_TypeDef * base_addr, uint32_t pin_num)
 {
-    // Enable the clock to GPIO port A
-    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
-    // Initialize pin A_5
-    GPIOA->MODER &= ~(3U << (5 * 2));
-    GPIOA->MODER |= (1 & 3) << (5 * 2);
+	base_addr->MODER &=~(GPIO_MODER_MODE0 << (pin_num*2));
+	base_addr->MODER |=((GPIO_MODE & GPIO_MODER_MODE0) << (pin_num*2));
+}
 
+void toggle_LED(GPIO_TypeDef * base_addr, uint32_t pin_num)
+{
     static int pra_pin_state = 0;
 
     while(1)
@@ -15,32 +15,27 @@ void toggle_LED(void)
         pra_pin_state = (~pra_pin_state);
         if(pra_pin_state != 0UL)
         {
-            GPIOA->BSRR = GPIO_BSRR_BS5;
+            base_addr->BSRR = GPIO_BSRR_BS5(pin_num);
         }
         else
         {
-            GPIOA->BRR = GPIO_BRR_BR5;
+            base_addr->BRR = GPIO_BRR_BR5(pin_num);
         }
         for(uint32_t test_pra=0UL;test_pra<50000UL;test_pra++){};
     }
 }
 
-void invert_LED(void)
+void invert_LED(GPIO_TypeDef * base_addr, uint32_t pin_num)
 {
-    // Enable the clock to GPIO port A
-    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
-    // Initialize pin A_5
-    GPIOA->MODER &= ~(3U << (5 * 2));
-    GPIOA->MODER |= (1 & 3) << (5 * 2);
     static int pra_pin_state = 0;
 
     pra_pin_state = (~pra_pin_state);
     if(pra_pin_state != 0UL)
     {
-        GPIOA->BSRR = GPIO_BSRR_BS5;
+        base_addr->BSRR = GPIO_BSRR_BS5(pin_num);
     }
     else
     {
-        GPIOA->BRR = GPIO_BRR_BR5;
+        base_addr->BRR = GPIO_BRR_BR5(pin_num);
     }
 }
