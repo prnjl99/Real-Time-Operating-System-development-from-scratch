@@ -6,7 +6,7 @@ void init_GPIO(GPIO_TypeDef * base_addr, uint32_t pin_num)
 	base_addr->MODER |=((GPIO_MODE & GPIO_MODER_MODE0) << (pin_num*2));
 }
 
-void toggle_LED(GPIO_TypeDef * base_addr, uint32_t pin_num)
+void toggle_GPIO(GPIO_TypeDef * base_addr, uint32_t pin_num)
 {
     static int pra_pin_state = 0;
 
@@ -25,7 +25,7 @@ void toggle_LED(GPIO_TypeDef * base_addr, uint32_t pin_num)
     }
 }
 
-void invert_LED(GPIO_TypeDef * base_addr, uint32_t pin_num)
+void invert_GPIO(GPIO_TypeDef * base_addr, uint32_t pin_num)
 {
     static int pra_pin_state = 0;
 
@@ -39,3 +39,16 @@ void invert_LED(GPIO_TypeDef * base_addr, uint32_t pin_num)
         base_addr->BRR = GPIO_BRR_BR5(pin_num);
     }
 }
+
+void write_GPIO(GPIO_TypeDef * base_addr, uint32_t pin_num, bool set)
+{
+    if(set != false)
+    {
+        base_addr->BSRR = GPIO_BSRR_BS5(pin_num);
+    }
+    else
+    {
+        base_addr->BRR = GPIO_BRR_BR5(pin_num);
+    }
+}
+
