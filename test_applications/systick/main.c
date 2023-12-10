@@ -22,10 +22,15 @@ int main(void)
     systick_init(4*50*ONE_SECOND);
     while(1UL)
     {
+    	static bool write_val = true;
         if (s_ticks==1)
         {
+        	write_val = (( write_val == true) ? false : true);
         	//__asm volatile ("BKPT #0");
-            invert_LED(GPIOA, 5UL);
+            write_GPIO(GPIOA, 5UL, write_val);
+            write_GPIO(GPIOB, 13UL, write_val);
+            write_GPIO(GPIOB, 14UL, write_val);
+            write_GPIO(GPIOB, 15UL, write_val);
 			s_ticks=0;
         }
     }
