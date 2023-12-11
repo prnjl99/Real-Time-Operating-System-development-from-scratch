@@ -98,4 +98,9 @@ typedef struct
   __IO uint32_t CSR;
 } RCC_TypeDef;
 
+static inline void __disable_irq(void)
+{
+  __asm volatile ("cpsid i" : : : "memory");
+}
+
 #endif /* COMMON_H */
