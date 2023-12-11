@@ -22,16 +22,24 @@ int main(void)
     systick_init(4*50*ONE_SECOND);
     while(1UL)
     {
-    	static bool write_val = true;
+        static bool write_val = true;
+        volatile uint32_t count=0;
         if (s_ticks==1)
         {
+            if(count==6)
+            {
+                __disable_irq();
+            }
+
         	write_val = (( write_val == true) ? false : true);
         	//__asm volatile ("BKPT #0");
             write_GPIO(GPIOA, 5UL, write_val);
             write_GPIO(GPIOB, 13UL, write_val);
             write_GPIO(GPIOB, 14UL, write_val);
             write_GPIO(GPIOB, 15UL, write_val);
-			s_ticks=0;
+
+            s_ticks=0;
+            count++;
         }
     }
 }
