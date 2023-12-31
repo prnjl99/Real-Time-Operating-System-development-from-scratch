@@ -1,32 +1,31 @@
 #include "common_driv.h"
 #include "gpio.h"
 #include "systick.h"
-#include "semaphore.h"
+#include "mailbox.h"
 
 uint32_t count0,count1 ;
-
-/* Semaphores for tasks to use */
-uint32_t semaphore_1, semaphore_2;
 
 /* Application task 1 */
 void Task1(void)
 {
+    uint32_t send_data=0;
     while(1)
     {
-        p_os_semaphore_wait(&semaphore_1);
+        p_os_mailbox_send(send_data);
+        send_data++;
         count0++;
-        p_os_semaphore_set(&semaphore_2);
     }
 }
 
 /* Application task 2 */
 void Task2(void)
 {
+    volatile rcvd_data=0;
     while(1)
     {
-        p_os_semaphore_wait(&semaphore_1);
+        rcvd_data = p_os_mailbox_recv();
         count1++;
-        p_os_semaphore_set(&semaphore_2);
+        (void)rcvd_data;
     }
 }
 
@@ -40,9 +39,8 @@ int main(void)
     init_GPIO(GPIOA, 5UL);
     init_GPIO(GPIOB, 13UL);
 
-    /* Set up semaphores for tasks to use */
-    p_os_semaphore_init(&semaphore_1, 1);
-    p_os_semaphore_init(&semaphore_2, 0);
+    /* Set up mailbox for tasks to use */
+    p_os_mailbox_init();
 
     p_init_kernel();
     p_kernel_create_task(&Task1,&Task2);
