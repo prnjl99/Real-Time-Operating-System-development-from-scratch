@@ -1,7 +1,7 @@
 #include "common_driv.h"
 #include "gpio.h"
 #include "systick.h"
-#include "thread.h"
+#include "spinlock.h"
 
 uint32_t count0,count1 ;
 
