@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "startup.h"
 
-volatile uint32_t s_ticks=0;
+volatile static uint32_t s_ticks=0;
 
 #ifdef CI_ENABLED
     void (*vector[])(void) __attribute__ ((section (".isr_vector"))) = {
@@ -36,7 +36,7 @@ void default_handler(void){
     while(1){};
 }
 
-void default_reset_handler(void)
+void default_reset_handler(void) __attribute__((naked))
 {
     uint32_t size = (uint32_t)&_edata - (uint32_t)&_sdata;
     uint32_t *pDst = (uint32_t*)&_sdata;
@@ -58,9 +58,20 @@ void default_reset_handler(void)
     main();
 }
 
-void default_SysTick_Handler(void)
+void Incr_tick_count(void)
+{
+    s_ticks++;
+}
+
+void default_SysTick_Handler(void) __attribute__((naked))
 {
     /* Saves R0-R3 , R12 , LR ,PC & PSR Register -> EXCEPTION Stack Frame */
+
+    /* Call Incr_tick_count() to show increment handler call count */
+    __asm volatile ("PUSH {LR}");
+    __asm volatile ("LDR R0,=Incr_tick_count");
+    __asm volatile ("BLX R0");
+    __asm volatile ("POP {LR}");
 
     /* Save Previous Context */
     __asm volatile ("CPSID"); /*Change Processor State -> Disable Interrupts */
@@ -82,7 +93,7 @@ void default_SysTick_Handler(void)
     __asm volatile ("BX"); /* Restores the new thread's registers , including PC , enabling new thread's execution */
 }
 
-void default_SysTick_Handler(void)
+void PendSV_Handler(void)
 {
     /* Saves R0-R3 , R12 , LR ,PC & PSR Register -> EXCEPTION Stack Frame */
 
