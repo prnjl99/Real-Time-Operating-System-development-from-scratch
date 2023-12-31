@@ -13,9 +13,9 @@ void Task1(void)
 {
     while(1)
     {
-        p_os_spinlock_wait(&semaphore_1);
+        p_os_semaphore_wait(&semaphore_1);
         count0++;
-        p_os_spinlock_set(&semaphore_2);
+        p_os_semaphore_set(&semaphore_2);
     }
 }
 
@@ -24,13 +24,13 @@ void Task2(void)
 {
     while(1)
     {
-        p_os_spinlock_wait(&semaphore_1);
+        p_os_semaphore_wait(&semaphore_1);
         count1++;
-        p_os_spinlock_set(&semaphore_2);
+        p_os_semaphore_set(&semaphore_2);
     }
 }
 
-/*  Here we are taking two spinlocks to avoid race condition.
+/*  Here we are taking two semaphores to avoid race condition.
     If take only one, then there is a possibility that the task releasing semaphore will immediately acquire it again */
 int main(void)
 {
@@ -41,8 +41,8 @@ int main(void)
     init_GPIO(GPIOB, 13UL);
 
     /* Set up semaphores for tasks to use */
-    p_os_spinlock_init(&semaphore_1, 1);
-    p_os_spinlock_init(&semaphore_2, 0);
+    p_os_semaphore_init(&semaphore_1, 1);
+    p_os_semaphore_init(&semaphore_2, 0);
 
     p_init_kernel();
     p_kernel_create_task(&Task1,&Task2);
